@@ -6,40 +6,35 @@
 //
 
 import SwiftUI
-import Observation
-
+import SwiftData
 // protocol Identifiable
-struct ExpenseItem: Identifiable, Codable {
+@Model
+class ExpenseItem {
     var id = UUID()
-    let name: String
-    let type: String
-    let amount: Double
+    var name: String
+    var type: String
+    var amount: Double
+    
+    init(id: UUID = UUID(), name: String, type: String, amount: Double) {
+        self.id = id
+        self.name = name
+        self.type = type
+        self.amount = amount
+    }
 }
 
-@Observable
+@Model
 class Expenses {
-    var items = [ExpenseItem]() {
-        didSet {
-            if let encoded = try? JSONEncoder().encode(items){
-                UserDefaults.standard.setValue(encoded, forKey: "Items")
-            }
-        }
-    }
-    init(){
-        if let savedItems = UserDefaults.standard.data(forKey: "Items") {
-            //[ExpenseItem].self means the type of array expenseitems
-            if let decodedItems = try? JSONDecoder().decode([ExpenseItem].self, from: savedItems){
-                items = decodedItems
-                return
-            }
-        }
-        items = []
+    var items = [ExpenseItem]()
+    
+    init(items: [ExpenseItem] = [ExpenseItem]()) {
+        self.items = items
     }
 }
-
+ 
 
 struct ContentView: View {
-    @State private var expenses = Expenses()
+    @Query var expenses: Expenses
     // using this as condition for showing a sheet
     @State private var showingAddExpense = false
     var body: some View {
