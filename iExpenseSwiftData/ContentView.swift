@@ -8,24 +8,16 @@
 import SwiftUI
 import SwiftData
 // protocol Identifiable
-@Model
-class ExpenseItem {
+struct ExpenseItem: Identifiable, Codable {
     var id = UUID()
-    var name: String
-    var type: String
-    var amount: Double
-    
-    init(id: UUID = UUID(), name: String, type: String, amount: Double) {
-        self.id = id
-        self.name = name
-        self.type = type
-        self.amount = amount
-    }
+    let name: String
+    let type: String
+    let amount: Double
 }
 
 @Model
 class Expenses {
-    var items = [ExpenseItem]()
+    var items : [ExpenseItem]
     
     init(items: [ExpenseItem] = [ExpenseItem]()) {
         self.items = items
