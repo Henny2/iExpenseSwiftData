@@ -14,7 +14,7 @@ struct AddView: View {
     @State private var amount = 0.0
     let types = ["Personal", "Business"]
     
-    var expenses: Expenses
+    @State var expenses: [ExpenseItem]
     
     var body: some View {
         NavigationStack{
@@ -32,7 +32,7 @@ struct AddView: View {
             .toolbar {
                 Button("Save"){
                     let item = ExpenseItem(name: name, type: type, amount: amount)
-                    expenses.items.append(item)
+                    expenses.append(item)
                     dismiss()
                 }
             }
@@ -41,5 +41,5 @@ struct AddView: View {
 }
 
 #Preview {
-    AddView(expenses: Expenses())
+    AddView(expenses: [ExpenseItem(name: "Food", type: "Personal", amount: 12)])
 }

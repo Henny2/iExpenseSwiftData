@@ -8,25 +8,25 @@
 import SwiftUI
 import SwiftData
 // protocol Identifiable
-struct ExpenseItem: Identifiable, Codable {
+@Model
+class ExpenseItem {
     var id = UUID()
     let name: String
     let type: String
     let amount: Double
-}
-
-@Model
-class Expenses {
-    var items : [ExpenseItem]
     
-    init(items: [ExpenseItem] = [ExpenseItem]()) {
-        self.items = items
+    init(id: UUID = UUID(), name: String, type: String, amount: Double) {
+        self.id = id
+        self.name = name
+        self.type = type
+        self.amount = amount
     }
 }
  
 
 struct ContentView: View {
-    @Query var expenses: Expenses
+    @Query var expenses: [ExpenseItem]
+    @Environment(\.modelContext) var modelContext
     // using this as condition for showing a sheet
     @State private var showingAddExpense = false
     var body: some View {
@@ -34,7 +34,7 @@ struct ContentView: View {
             List{
                 // don't need the id: \.id anymore because we use the Identifiable protocol, Swift knows there is a unique id
                 Section("Personal Expenses"){
-                    ForEach(expenses.items){ item in
+                    ForEach(expenses){ item in
                         if item.type == "Personal" {
                             HStack{
                                 VStack(alignment: .leading) {
@@ -50,7 +50,7 @@ struct ContentView: View {
                     .onDelete(perform: removeItems)
                 }
                 Section("Business Expenses"){
-                    ForEach(expenses.items){ item in
+                    ForEach(expenses){ item in
                         if item.type == "Business"{
                             HStack{
                                 VStack(alignment: .leading) {
@@ -80,7 +80,13 @@ struct ContentView: View {
     }
     
     func removeItems(at offsets: IndexSet) {
-        expenses.items.remove(atOffsets: offsets)
+        for offset in offsets {
+            // find this book in our query
+            let item = expenses[offset]
+            
+            // delete it from the context
+            modelContext.delete(item)
+        }
     }
 }
 
