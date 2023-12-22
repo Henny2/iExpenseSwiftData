@@ -22,11 +22,24 @@ class ExpenseItem {
         self.amount = amount
     }
 }
+
+// https://www.hackingwithswift.com/quick-start/swiftdata/sorting-query-results
+// explains that you need to create a subview to change parameters of the query
  
 
 struct ContentView: View {
-    @Query var expenses: [ExpenseItem]
+   
+    
+    //    @Query(
+    //        filter: #Predicate<User> { user in
+    //            user.name.localizedStandardContains("r") &&
+    //            user.city == "Liverpool" },
+    //        sort: \User.name) var users: [User]
+    
     @Environment(\.modelContext) var modelContext
+    @State var sortOrder = [SortDescriptor(\ExpenseItem.name)]
+//    @Query(sort: sortOrder) var expenses: [ExpenseItem]
+    @Query var expenses: [ExpenseItem]
     // using this as condition for showing a sheet
     @State private var showingAddExpense = false
     var body: some View {
@@ -69,14 +82,25 @@ struct ContentView: View {
             }
             .navigationTitle("iExpense")
             .toolbar {
+                
                 Button("Add expense", systemImage: "plus"){
                     showingAddExpense = true
                 }
+                Button("Filter", systemImage: "line.3.horizontal.decrease.circle"){
+                    print("filter")
+                    sortOrder = [SortDescriptor(\ExpenseItem.amount)]
+                    print(sortOrder)
+                }
+                
             }
             .sheet(isPresented: $showingAddExpense, content: {
                 AddView()
             })
         }
+    }
+    
+    init(sortOrder: [SortDescriptor<ExpenseItem>]){
+        _expenses = Query(sort: sortOrder)
     }
     
     func removeItems(at offsets: IndexSet) {
@@ -91,5 +115,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(sortOrder: [SortDescriptor(\ExpenseItem.name)])
 }

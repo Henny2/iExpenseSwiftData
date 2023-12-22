@@ -12,7 +12,7 @@ import SwiftData
 struct iExpenseSwiftDataApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(sortOrder: [SortDescriptor(\ExpenseItem.name)])
         }.modelContainer(for: ExpenseItem.self)
     }
 }
