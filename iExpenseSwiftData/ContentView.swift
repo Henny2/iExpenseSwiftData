@@ -30,9 +30,10 @@ struct ContentView: View {
     @Environment(\.modelContext) var modelContext
     @State var sortOrder = [SortDescriptor(\ExpenseItem.name)]
     @State private var showingAddExpense = false
+    @State private var searchString = ""
     var body: some View {
         NavigationStack{
-            ExpesnseListView(sort: sortOrder)
+            ExpesnseListView(filter: searchString, sort: sortOrder)
                 .navigationTitle("iExpense")
                 .toolbar {
                     Button("Add expense", systemImage: "plus"){
@@ -49,6 +50,7 @@ struct ContentView: View {
                     }
 
                 }
+                .searchable(text: $searchString)
                 .sheet(isPresented: $showingAddExpense, content: {
                     AddView()
                 })

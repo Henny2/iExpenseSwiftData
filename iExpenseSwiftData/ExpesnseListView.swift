@@ -10,8 +10,14 @@ import SwiftUI
 struct ExpesnseListView: View {
     @Environment(\.modelContext) var modelContext
     @Query var expenses: [ExpenseItem]
-    init(sort: [SortDescriptor<ExpenseItem>]) {
-        _expenses = Query(sort: sort)
+    init(filter: String, sort: [SortDescriptor<ExpenseItem>]) {
+        _expenses = Query(filter: #Predicate {
+            if filter.isEmpty {
+                return true
+            } else {
+                return $0.name.localizedStandardContains(filter)
+            }
+        }, sort: sort)
     }
     var body: some View {
         List{
@@ -61,5 +67,5 @@ struct ExpesnseListView: View {
 }
 
 #Preview {
-    ExpesnseListView(sort: [SortDescriptor(\ExpenseItem.name)])
+    ExpesnseListView(filter: "" , sort: [SortDescriptor(\ExpenseItem.name)])
 }
